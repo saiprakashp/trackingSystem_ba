@@ -1,0 +1,120 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.1.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+
+ <bean id="txManager" 
+	      class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+	        <property name="sessionFactory" ref="sessionFactory"/>
+	    </bean>
+
+	<bean
+		class="org.springframework.orm.hibernate5.HibernateExceptionTranslator"></bean>
+
+	<bean id="decrypter" class="com.egil.pts.util.Decrypter"
+		init-method="decrypt">
+		<property name="encryptedPassword" value="2TGw79Kjuss=" />
+	</bean>
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<!--property name="driverClass" value="com.mysql.jdbc.Driver"/ -->
+		<property name="driverClass" value="org.mariadb.jdbc.Driver" />
+		<property name="jdbcUrl"
+			value="jdbc:mariadb://127.0.0.1:3306/PTS" />
+		<!-- <property name="jdbcUrl" value="jdbc:mariadb://localhost:3306/PTS" 
+			/> -->
+		<property name="user" value="ptsusr" />
+		<property name="password" value="ptspass" />
+
+		<property name="initialPoolSize" value="10" />
+		<property name="maxPoolSize" value="50" />
+		<property name="minPoolSize" value="5" />
+		<property name="maxIdleTime" value="600" />
+		<property name="checkoutTimeout" value="60000" />
+		<property name="acquireIncrement" value="2" />
+		<property name="acquireRetryAttempts" value="0" />
+
+		<property name="numHelperThreads" value="6" />
+		<property name="acquireRetryDelay" value="3000" />
+
+		<property name="preferredTestQuery"
+			value="select 1 from dual" />
+		<property name="idleConnectionTestPeriod" value="120" />
+		<property name="testConnectionOnCheckin" value="true" />
+	</bean>
+
+	<bean
+	id="sessionFactory"
+	class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+
+			<list>
+				<value>com.egil.pts.dao.domain.DummyTest</value>
+				<value>com.egil.pts.dao.domain.Privilege</value>
+				<value>com.egil.pts.dao.domain.Roles</value>
+				<value>com.egil.pts.dao.domain.Streams</value>
+				<value>com.egil.pts.dao.domain.UserTypes</value>
+				<value>com.egil.pts.dao.domain.User</value>
+				<value>com.egil.pts.dao.domain.Technologies</value>
+				<value>com.egil.pts.dao.domain.UserRole</value>
+				<value>com.egil.pts.dao.domain.Pillar</value>
+				<value>com.egil.pts.dao.domain.UserSupervisor</value>
+				<value>com.egil.pts.dao.domain.UserPlatforms</value>
+				<value>com.egil.pts.dao.domain.UserNetworkCodes</value>
+				<value>com.egil.pts.dao.domain.UserSkills</value>
+				<value>com.egil.pts.dao.domain.UserSkillScore</value>
+				<value>com.egil.pts.dao.domain.UserPlatformCompetencyScore</value>
+				<value>com.egil.pts.dao.domain.UserProjects</value>
+				<value>com.egil.pts.dao.domain.ActivityCodes</value>
+				<value>com.egil.pts.dao.domain.ActivityCodesNew</value>
+				<value>com.egil.pts.dao.domain.Customer</value>
+				<value>com.egil.pts.dao.domain.Project</value>
+				<value>com.egil.pts.dao.domain.NetworkCodes</value>
+				<value>com.egil.pts.dao.domain.UserUtilization</value>
+				<value>com.egil.pts.dao.domain.Category</value>
+				<value>com.egil.pts.dao.domain.ProductOwner</value>
+				<value>com.egil.pts.dao.domain.WBS</value>
+				<value>com.egil.pts.dao.domain.UserTimesheet</value>
+				<value>com.egil.pts.dao.domain.TimesheetTemplate</value>
+				<value>com.egil.pts.dao.domain.CapacityPlanning</value>
+				<value>com.egil.pts.dao.domain.UserWeekOff</value>
+				<value>com.egil.pts.dao.domain.Location</value>
+				<value>com.egil.pts.dao.domain.EssDetails</value>
+				<value>com.egil.pts.dao.domain.PTSWorkingDays</value>
+				<value>com.egil.pts.dao.domain.Announcements</value>
+				<value>com.egil.pts.dao.domain.MhrCategoryTypes</value>
+				<value>com.egil.pts.dao.domain.CustomerAccounts</value>
+				<value>com.egil.pts.dao.domain.AccountType</value>
+				<value>com.egil.pts.dao.domain.UserAccounts</value>
+				<value>com.egil.pts.dao.domain.SupervisorResourceUtilization</value>
+				<value>com.egil.pts.dao.domain.ReportQueryMapper</value>
+				<value>com.egil.pts.dao.domain.FeedBack</value>
+				<value>com.egil.pts.dao.domain.StableTeams</value>
+				
+				
+				
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<!-- <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> 
+					<prop key="hibernate.enable_lazy_load_no_trans">true</prop> -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.jdbc.batch_size">20</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<prop key="hibernate.cglib.use_reflection_optimizer">true</prop>
+				<prop key="hibernate.connection.release_mode">auto</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

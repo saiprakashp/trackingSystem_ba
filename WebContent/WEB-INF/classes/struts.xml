@@ -1,0 +1,1420 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN"
+    "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+
+	<constant name="struts.action.excludePattern" value="/ws/.*?" />
+	<constant name="struts.enable.DynamicMethodInvocation"
+		value="false" />
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.custom.i18n.resources"
+		value="ApplicationResources,pts" />
+	<constant name="struts.multipart.maxSize" value="1524288000" />
+	<package name="default" extends="struts-default, json-default">
+		<interceptors>
+			<interceptor name="requestValidator"
+				class="com.egil.pts.actions.RequestValidator" />
+			<interceptor name="json"
+				class="org.apache.struts2.json.JSONInterceptor" />
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="requestValidator" />
+				<interceptor-ref name="json" />
+				<interceptor-ref name="exception" />
+				<interceptor-ref name="servletConfig" />
+				<interceptor-ref name="chain" />
+				<interceptor-ref name="fileUpload" />
+				<interceptor-ref name="checkbox" />
+				<interceptor-ref name="staticParams" />
+				<interceptor-ref name="actionMappingParams" />
+				<interceptor-ref name="params">
+					<param name="excludeParams">dojo\..*,^struts\..*</param>
+				</interceptor-ref>
+				<interceptor-ref name="conversionError" />
+				<interceptor-ref name="validation">
+					<param name="validateAnnotatedMethodOnly">true</param>
+					<param name="excludeMethods">input,back,cancel,browse</param>
+				</interceptor-ref>
+				<interceptor-ref name="workflow">
+					<param name="excludeMethods">input,back,cancel,browse</param>
+				</interceptor-ref>
+			</interceptor-stack>
+			<interceptor-stack name="myFileUploadStack">
+				<interceptor-ref name="myStack" />
+				<interceptor-ref name="fileUploadStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="myStack" />
+
+		<global-results>
+			<result name="timeout">../index.jsp</result>
+		</global-results>
+	</package>
+
+	<package name="login" namespace="/login" extends="default">
+		<action name="login" class="loginAction">
+			<result>/jsp/alHome.jsp
+			</result>
+			<result name="input">../index.jsp
+			</result>
+			<result name="error">../index.jsp
+			</result>
+		</action>
+		<action name="logout" method="exitApplication"
+			class="loginAction">
+			<result>../index.jsp
+			</result>
+		</action>
+
+		<action name="showDashboard" method="showDashboard"
+			class="loginAction">
+			<result>/jsp/alHome.jsp
+			</result>
+		</action>
+
+		<action name="getDashboardUtilizationHrefId"
+			method="getDashboardUtilizationHrefId" class="loginAction">
+			<result>/jsp/dashboardUtilizationDetails.jsp
+			</result>
+		</action>
+		<action name="ajaxSetCustomer" method="goSetCUstomer"
+			class="loginAction">
+			<result name="success" type="json"></result>
+		</action>
+
+	</package>
+
+	<package name="user" namespace="/user" extends="default">
+		<action name="manageUser" class="userAction">
+			<result>/jsp/user/manageUser.jsp
+			</result>
+		</action>
+		<action name="exportResourceStableDetails"
+			method="exportResourceStableDetails" class="userAction">
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+			<result name="success">/jsp/user/manageUser.jsp
+			</result>
+			<result name="error">/jsp/user/manageUser.jsp
+			</result>
+			<result name="input">/jsp/user/manageUser.jsp
+			</result>
+		</action>
+		<action name="exportAllResourceStableDetails"
+			method="exportAllResourceStableDetails" class="userAction">
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+			<result name="success">/jsp/user/manageUser.jsp
+			</result>
+			<result name="error">/jsp/user/manageUser.jsp
+			</result>
+			<result name="input">/jsp/user/manageUser.jsp
+			</result>
+		</action>
+		<action name="ajaxManageUser" method="goManageUser"
+			class="userAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="goCreateUser" method="goCreateUser"
+			class="userAction">
+			<result>/jsp/user/createUser.jsp
+			</result>
+		</action>
+
+		<action name="goEditUser" method="goEditUser"
+			class="userAction">
+			<result>/jsp/user/editUser.jsp
+			</result>
+		</action>
+
+		<action name="downloadUsers" method="downloadUsers"
+			class="userAction">
+			<result name="error" type="chain">manageUser</result>
+		</action>
+
+		<action name="addUser" method="addUser" class="userAction">
+			<result name="input">/jsp/user/createUser.jsp
+			</result>
+			<result name="error">/jsp/user/createUser.jsp
+			</result>
+			<result name="success" type="chain">manageUser</result>
+		</action>
+
+		<action name="modifyUser" method="modifyUser"
+			class="userAction">
+			<result name="input">/jsp/user/editUser.jsp
+			</result>
+			<result name="error">/jsp/user/editUser.jsp
+			</result>
+			<result name="success" type="chain">manageUser</result>
+		</action>
+
+		<action name="macdOperation" method="userMACDOperation"
+			class="userAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="viewMyProfile" method="goViewProfile"
+			class="userAction">
+			<result>/jsp/user/myProfile.jsp
+			</result>
+		</action>
+
+		<action name="saveMyProfile" method="saveMyProfile"
+			class="userAction">
+			<interceptor-ref name="myFileUploadStack" />
+			<result name="input">/jsp/user/myProfile.jsp
+			</result>
+			<result name="success">/jsp/user/myProfile.jsp
+			</result>
+		</action>
+
+		<action name="goResetPassword" method="goResetPassword"
+			class="userAction">
+			<result>/jsp/user/resetPassword.jsp
+			</result>
+		</action>
+		<action name="gomasterResetPassword"
+			method="gomasterResetPassword" class="userAction">
+			<result>/jsp/user/masterResetPassword.jsp
+			</result>
+		</action>
+		<action name="resetPassword" method="resetPassword"
+			class="userAction">
+			<result name="input">/jsp/user/resetPassword.jsp
+			</result>
+			<result name="success">/jsp/user/resetPassword.jsp
+			</result>
+		</action>
+
+		<action name="goGetPasswordmaster" method="goGetPasswordmaster"
+			class="userAction">
+			<result>/jsp/user/masterPassword.jsp
+			</result>
+		</action>
+
+
+		<action name="changePassword" method="changePassword"
+			class="userAction">
+			<result name="initial">../changePassword.jsp
+			</result>
+			<result name="error">../changePassword.jsp
+			</result>
+			<result name="success">../forgotPasswordSuccess.jsp
+			</result>
+		</action>
+		<action name="goTechScore" method="goTechScore"
+			class="userAction">
+			<result name="input">/jsp/user/techScore.jsp
+			</result>
+			<result name="error">/jsp/user/techScore.jsp
+			</result>
+			<result name="success">/jsp/user/techScore.jsp
+			</result>
+		</action>
+		<action name="goGetUserTechScore" method="goGetUserTechScore"
+			class="userAction">
+			<result name="input">/jsp/user/ajaxTechScore.jsp
+			</result>
+			<result name="error">/jsp/user/ajaxTechScore.jsp
+			</result>
+			<result name="success">/jsp/user/ajaxTechScore.jsp
+			</result>
+		</action>
+		<action name="saveTechScore" method="saveTechScore"
+			class="userAction">
+			<result>/jsp/common/message.jsp
+			</result>
+		</action>
+
+		<action name="goCompetencyScore" method="goCompetencyScore"
+			class="userAction">
+			<result name="input">/jsp/user/competencyScore.jsp
+			</result>
+			<result name="error">/jsp/user/competencyScore.jsp
+			</result>
+			<result name="success">/jsp/user/competencyScore.jsp
+			</result>
+		</action>
+		<action name="goGetUserAppCompScore"
+			method="goGetUserAppCompScore" class="userAction">
+			<result name="input">/jsp/user/ajaxCompetencyScore.jsp
+			</result>
+			<result name="error">/jsp/user/ajaxCompetencyScore.jsp
+			</result>
+			<result name="success">/jsp/user/ajaxCompetencyScore.jsp
+			</result>
+		</action>
+		<action name="saveCompetencyScore" method="saveCompetencyScore"
+			class="userAction">
+			<result>/jsp/common/message.jsp
+			</result>
+		</action>
+
+		<action name="utilization" method="userUtilization"
+			class="userAction">
+			<result>/jsp/user/manageUserUitilization.jsp
+			</result>
+		</action>
+
+		<action name="ajaxUserUtilization" method="goUserUtilization"
+			class="userAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="sendMailResourceUtilization"
+			method="sendMailResourceUtilization" class="userAction">
+			<result>/jsp/common/message.jsp
+			</result>
+		</action>
+
+		<action name="ajaxGetSupervisorAccounts"
+			method="goAssignedAccounts" class="userAction">
+			<result>/jsp/user/accountSelection.jsp
+			</result>
+		</action>
+
+		<action name="ajaxGetUserContribution"
+			method="goGetpillarAppsForContribution" class="userAction">
+			<result>/jsp/user/userContribution.jsp
+			</result>
+		</action>
+
+		<action name="manaHolidayList" method="manaHolidayList"
+			class="loginAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="egiHolidayList" method="egiHolidayList"
+			class="loginAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="getUserStableTeamsData"
+			method="getUserStableTeamsData" class="userAction">
+			<result>/jsp/user/manageUserStableTeams.jsp
+			</result>
+		</action>
+
+
+		<action name="saveUserStableTeamsData"
+			method="saveUserStableTeamsData" class="userAction">
+			<result name="success" type="chain">getUserStableTeamsData
+			</result>
+		</action>
+
+
+
+	</package>
+
+	<package name="projects" namespace="/projects"
+		extends="default">
+
+		<action name="manageAccounts" class="projectAction">
+			<result>/jsp/projects/manageAccounts.jsp
+			</result>
+		</action>
+		<action name="managePillars" class="pillarAction">
+			<result>/jsp/projects/managePillars.jsp
+			</result>
+		</action>
+		<action name="ajaxManagePillars" method="goManagePillars"
+			class="pillarAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="pillarMACDOperation" method="pillarMACDOperation"
+			class="pillarAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="manageProjects" class="projectAction">
+			<result>/jsp/projects/manageProjects.jsp
+			</result>
+		</action>
+		<action name="ajaxManageProjects" method="goManageProjects"
+			class="projectAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="projectMACDOperation"
+			method="projectMACDOperation" class="projectAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="manageNetworkCodes" class="networkCodesAction">
+			<result>/jsp/projects/manageNetworkCodes.jsp
+			</result>
+		</action>
+		<action name="manageUserNetworkContribution"
+			method="manageUserNetworkContribution" class="networkCodesAction">
+			<result>/jsp/projects/manageUserNetworkContribution.jsp
+			</result>
+		</action>
+		<action name="goDownloadUsernwContribution"
+			method="goDownloadUsernwContribution" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="manageUserNetworkContributionAjax"
+			method="manageUserNetworkContribution" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="addUserNetworkContributionAjax"
+			method="addUserNetworkContribution" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="manageNetworkCodesView"
+			class="networkCodesAction">
+			<result>/jsp/projects/manageNetworkCodesViewAccess.jsp
+			</result>
+		</action>
+		<action name="ajaxManageNetworkCodes"
+			method="goManageNetworkCodes" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="ajaxGetProjectDetails"
+			method="goGetProjectDetails" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="ajaxGetStableTeamsDetails"
+			method="getStableTeamsData" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="networkMACDOperation"
+			method="networkMACDOperation" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="pmManageNetworkCodes" class="networkCodesAction">
+			<result>/jsp/projects/pmManageNetworkCodes.jsp
+			</result>
+		</action>
+		<action name="updateProjectPhase" method="updateProjectPhase"
+			class="networkCodesAction">
+			<result name="input">/jsp/projects/viewNetworkCodePM.jsp
+			</result>
+			<result name="error">/jsp/projects/viewNetworkCodePM.jsp
+			</result>
+			<result name="success" type="chain">manageNetworkCodesView
+			</result>
+			<!-- <result name="success" type="json"></result> -->
+		</action>
+
+		<action name="saveProjectReleasePhase"
+			method="updateProjectPhase" class="networkCodesAction">
+			<result>/jsp/common/message.jsp
+			</result>
+		</action>
+
+		<action name="goCreateNetworkCode" class="networkCodesAction"
+			method="goCreateNetworkCode">
+			<result>/jsp/projects/createNetworkCode.jsp
+			</result>
+		</action>
+
+		<action name="goViewNetworkCode" method="goEditNetworkCode"
+			class="networkCodesAction">
+			<result>/jsp/projects/viewNetworkCodePM.jsp
+			</result>
+		</action>
+
+
+		<action name="goEditNetworkCode" method="goEditNetworkCode"
+			class="networkCodesAction">
+			<result>/jsp/projects/editNetworkCode.jsp
+			</result>
+		</action>
+
+		<action name="goCloneNetworkCode" method="goEditNetworkCode"
+			class="networkCodesAction">
+			<result>/jsp/projects/createNetworkCode.jsp
+			</result>
+		</action>
+
+		<action name="addNetworkCode" method="addNetworkCode"
+			class="networkCodesAction">
+			<result name="input">/jsp/projects/createNetworkCode.jsp
+			</result>
+			<result name="error">/jsp/projects/createNetworkCode.jsp
+			</result>
+			<result name="success" type="chain">manageNetworkCodes
+			</result>
+		</action>
+
+		<action name="downloadNetworkCodes"
+			method="downloadNetworkCodes" class="networkCodesAction">
+			<result name="error" type="chain">manageNetworkCodes
+			</result>
+		</action>
+
+		<action name="modifyNetworkCode" method="modifyNetworkCode"
+			class="networkCodesAction">
+			<result name="input">/jsp/projects/editNetworkCode.jsp
+			</result>
+			<result name="error">/jsp/projects/editNetworkCode.jsp
+			</result>
+			<result name="success" type="chain">manageNetworkCodes
+			</result>
+		</action>
+		<action name="modifyNetworkCodeView"
+			method="modifyNetworkCodeView" class="networkCodesAction">
+			<result name="input">/jsp/projects/editNetworkCode.jsp
+			</result>
+			<result name="error">/jsp/projects/editNetworkCode.jsp
+			</result>
+			<result name="success" type="chain">manageNetworkCodesView
+			</result>
+		</action>
+
+		<action name="manageActivityCodes" class="activityCodesAction">
+			<result>/jsp/projects/manageActivityCodes.jsp
+			</result>
+		</action>
+		<action name="ajaxManageActivityCodes"
+			method="goManageActivityCodes" class="activityCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="activityMACDOperation"
+			method="activityMACDOperation" class="activityCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="assignResources"
+			method="goMapResourcesToNetworkCode" class="networkCodesAction">
+			<result>/jsp/projects/mapProjectResources.jsp
+			</result>
+		</action>
+		<action name="goAssignedResources" method="goAssignedResources"
+			class="networkCodesAction">
+			<result>/jsp/projects/assignResources.jsp
+			</result>
+		</action>
+
+		<action name="addResourcesToNetworkCodes"
+			method="addResourcesToNetworkCodes" class="networkCodesAction">
+			<result>/jsp/projects/mapProjectResources.jsp
+			</result>
+		</action>
+
+		<action name="mapNetworkCodes" method="goMapNetworkCodes"
+			class="networkCodesAction">
+			<result>/jsp/projects/mapNetworkCodes.jsp
+			</result>
+		</action>
+		<action name="goAssignNetworkCodes"
+			method="goAssignNetworkCodes" class="networkCodesAction">
+			<result>/jsp/projects/assignNetworkCodes.jsp
+			</result>
+		</action>
+
+		<action name="addNetworkCodesToUser"
+			method="addNetworkCodesToUser" class="networkCodesAction">
+			<result>/jsp/projects/mapNetworkCodes.jsp
+			</result>
+		</action>
+
+		<action name="loadPillars" method="loadPillars"
+			class="pillarAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="loadProjects" method="loadProjects"
+			class="projectAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="loadProjectSubCategory"
+			method="loadProjectSubCategory" class="networkCodesAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="getPillarsMap" method="goPillarsMap"
+			class="networkCodesAction">
+			<result>/jsp/projects/pillars.jsp
+			</result>
+		</action>
+
+		<action name="getProjectsMap" method="goProjectsMap"
+			class="networkCodesAction">
+			<result>/jsp/projects/projects.jsp
+			</result>
+		</action>
+
+		<action name="getProgramManagersMap"
+			method="goProgramManagersMap" class="networkCodesAction">
+			<result>/jsp/projects/programManagers.jsp
+			</result>
+		</action>
+
+		<action name="getProjectManagersMap"
+			method="goProjectManagersMap" class="networkCodesAction">
+			<result>/jsp/projects/projectManagers.jsp
+			</result>
+		</action>
+
+		<action name="goProjectPhaseEdit" method="goProjectPhaseEdit"
+			class="networkCodesAction">
+			<result name="input">/jsp/projects/editProjectPhase.jsp
+			</result>
+			<result name="error">/jsp/projects/editProjectPhase.jsp
+			</result>
+			<result name="success">/jsp/projects/editProjectPhase.jsp
+			</result>
+		</action>
+		<action name="managePlannedUtilization"
+			method="getPlannedUserUtilization" class="projectAction">
+			<result>/jsp/projects/managePlannedUtilization.jsp
+			</result>
+		</action>
+		<action name="ajaxPlannedUserUtilization"
+			method="getPlannedUserUtilization" class="projectAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="updatePlannedUtilization"
+			method="saveorupdatePlannedUserUtilization" class="projectAction">
+			<result>/jsp/projects/managePlannedUtilization.jsp
+			</result>
+		</action>
+		<action name="uploadProjectTFSMapper"
+			method="uploadProjectTFSMapper" class="networkCodesAction">
+			<result>/jsp/projects/uploadTFS.jsp
+			</result>
+		</action>
+		<action name="initialProjectTFSMapper"
+			method="initialProjectTFSMapper" class="networkCodesAction">
+			<result>/jsp/projects/uploadTFS.jsp
+			</result>
+		</action>
+
+	</package>
+
+
+	<package name="utilization" namespace="/utilization"
+		extends="default">
+		<action name="manageUserUtilization"
+			method="manageUserUtilization" class="userUtilizationAction">
+			<result>/jsp/utilization/utilization.jsp
+			</result>
+		</action>
+
+		<action name="ajaxManageUserUtilization"
+			method="goManageUserUtilization" class="userUtilizationAction">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+
+		<action name="ajaxUserUtilizationDetails"
+			method="manageUserUtilizationDetails"
+			class="userUtilizationDetailsAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="exportResourceEffortDetails"
+			method="downloadExcel" class="userUtilizationAction">
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+			<result name="success">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="error">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="input">/jsp/utilization/utilization.jsp
+			</result>
+		</action>
+		<action name="exportAllResourceEffortDetails"
+			method="downloadAllExcel" class="userUtilizationAction">
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+			<result name="success">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="error">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="input">/jsp/utilization/utilization.jsp
+			</result>
+		</action>
+
+
+
+		<action name="exportResourceStableDetails"
+			method="exportResourceStableDetails" class="userUtilizationAction">
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+			<result name="success">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="error">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="input">/jsp/utilization/utilization.jsp
+			</result>
+		</action>
+		<action name="exportAllResourceStableDetails"
+			method="exportAllResourceStableDetails" class="userUtilizationAction">
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+			<result name="success">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="error">/jsp/utilization/utilization.jsp
+			</result>
+			<result name="input">/jsp/utilization/utilization.jsp
+			</result>
+		</action>
+
+		<action name="userUtilizationReport"
+			method="goRICOUtilizationReport" class="userUtilizationAction">
+			<result name="success">/jsp/timesheet/timesheetDetails.jsp
+			</result>
+			<result name="error">/jsp/timesheet/timesheetDetails.jsp
+			</result>
+			<result name="input">/jsp/timesheet/timesheetDetails.jsp
+			</result>
+		</action>
+		<action name="ajaxUserUtilizationReport"
+			method="goRICOUtilizationReportDetails" class="userUtilizationAction">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+		<action name="ricoUtilizationReport"
+			method="goRICOUtilizationReport" class="userUtilizationAction">
+			<result name="success">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+			<result name="error">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+			<result name="input">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+		</action>
+		<action name="ajaxRICOUtilizationReport"
+			method="goRICOUtilizationReportDetails" class="userUtilizationAction">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+		<action name="networkUtilization" method="goNetworkUtilization"
+			class="userUtilizationAction">
+			<result name="success">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+			<result name="error">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+			<result name="input">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+		</action>
+		<action name="ajaxNetworkUtilization"
+			method="goGetNetworkUtilization" class="userUtilizationAction">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+
+		<action name="exportRICOResourceEffortDetails"
+			method="generateRICOUtilizationSummaryExcel"
+			class="userUtilizationAction">
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+			<result name="success">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+			<result name="error">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+			<result name="input">/jsp/utilization/ricoUtilizationReport.jsp
+			</result>
+		</action>
+
+		<action name="sendMail" method="sendMail"
+			class="userUtilizationAction">
+			<result>/jsp/common/message.jsp
+			</result>
+		</action>
+
+		<action name="manageNCUtilization"
+			class="capacityPlanningAction">
+			<result>/jsp/utilization/networkCodeUtilization.jsp
+			</result>
+		</action>
+
+		<action name="ajaxManageNCUtilization"
+			method="goManageNCUtilization" class="networkCodeReportAction">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+
+		<action name="ajaxNCUtilizationDetails"
+			method="manageNCUtilizationDetails"
+			class="networkCodeDetailsReportAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="networkCodeUtilization"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/utilization/networkCodeUtilization_new.jsp
+			</result>
+		</action>
+
+		<action name="manageProjects" method="goManageProjects"
+			class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="manageProjectNC" method="goManageProjectNC"
+			class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="downloadnetworkCodeUtilization"
+			method="downloadUserNWUtilization"
+			class="networkCodeUtilizationReport">
+			<result type="chain">networkCodeUtilization
+			</result>
+			<result name="error" type="chain">networkCodeUtilization
+			</result>
+		</action>
+
+		<action name="manageUserProjectNC"
+			method="goManageUserProjectNC" class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="manageUserNCUtilizationDetails"
+			method="manageNCUtilizationDetails"
+			class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="getPillarsMap" method="goPillarsMap"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/projects/pillars.jsp
+			</result>
+		</action>
+
+		<action name="getProjectsMap" method="goProjectsMap"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/projects/projects.jsp
+			</result>
+		</action>
+		<action name="getProjectsMapAjax" method="goProjectsMap"
+			class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="getReleaseMapAjax" method="goReleaseMap"
+			class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="getReleaseMap" method="goReleaseMap"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/projects/release.jsp
+			</result>
+		</action>
+		<action name="goReleaseMapNew" method="goReleaseMapNew"
+			class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="getNetworkCodesMap" method="goReleaseMap"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/projects/networkCodes.jsp
+			</result>
+		</action>
+		<action name="goUsersMap" method="goUsersMap"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/projects/UsersMap.jsp
+			</result>
+		</action>
+	</package>
+	<package name="customer" namespace="/customer"
+		extends="default">
+		<action name="manageCustomers" class="customerAction">
+			<result>/jsp/customer/manageCustomers.jsp
+			</result>
+		</action>
+		<action name="ajaxManageCustomers" method="goManageCustomers"
+			class="customerAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="customerMACDOperation"
+			method="customerMACDOperation" class="customerAction">
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+
+	<package name="reports" namespace="/reports" extends="default">
+		<action name="getCustomDaoResults" method="getCustomDaoResults"
+			class="daoReportAction">
+			<result name="error">/jsp/dao/daoQueryResults.jsp
+			</result>
+			<result name="success">/jsp/dao/daoQueryResults.jsp
+			</result>
+		</action>
+		<action name="managerCustomDaoResults"
+			method="managerCustomDaoResults" class="daoReportAction">
+			<result name="error">/jsp/dao/manageReports.jsp
+			</result>
+			<result name="success">/jsp/dao/manageReports.jsp
+			</result>
+		</action>
+		<action name="downloadDaoQueryData"
+			method="downloadDaoQueryData" class="daoReportAction">
+			<result name="error">/jsp/dao/daoQueryResults.jsp
+			</result>
+			<result name="success">/jsp/dao/daoQueryResults.jsp
+			</result>
+		</action>
+
+		<action name="executeManagerUtilDataMonthNow"
+			method="executeManagerUtilDataMonthNow" class="daoReportAction">
+			<result name="error">/jsp/dao/daoQueryResults.jsp
+			</result>
+			<result name="success">/jsp/dao/daoQueryResults.jsp
+			</result>
+		</action>
+
+		<action name="goGetReportforLM" method="goGetReportforLM"
+			class="daoReportAction">
+			<result name="error">/jsp/reports/pmOnlyReport.jsp
+			</result>
+			<result name="success">/jsp/reports/pmOnlyReport.jsp
+			</result>
+		</action>
+
+		<action name="goDownloadReportforLM"
+			method="goDownloadReportforLM" class="daoReportAction">
+			<result type="chain">goGetReportforLM
+			</result>
+		</action>
+
+		<action name="nceffortReport"
+			method="generateNetworkCodeEffortChart" class="reportAction">
+			<result>/jsp/reports/ncReport.jsp
+			</result>
+		</action>
+
+		<action name="nceffortStatisticsReport"
+			method="generateNetworkCodesEffortStatisticsChart"
+			class="reportAction">
+			<result>/jsp/reports/ncReport.jsp
+			</result>
+		</action>
+
+		<action name="getCapacityImage" method="getCapacityImage"
+			class="reportAction">
+			<result>/jsp/reports/ajaxCapacity.jsp
+			</result>
+		</action>
+		<action name="uploadCapacityImage" method="uploadCapacityImage"
+			class="reportAction">
+			<interceptor-ref name="myFileUploadStack" />
+			<result>/jsp/reports/capacity.jsp
+			</result>
+		</action>
+		<action name="userContributionReportApp"
+			method="getUserContributionReportApp" class="reportAction">
+			<result>/jsp/reports/userContributionReportApp.jsp
+			</result>
+		</action>
+		<action name="userContributionReport"
+			method="getUserContributionReport" class="reportAction">
+			<result>/jsp/reports/userContributionReport.jsp
+			</result>
+		</action>
+		<action name="ajaxUserContributionReport"
+			method="getUserContributionReport" class="reportAction">
+			<result name="success">/jsp/reports/ajaxUserContributionReport.jsp
+			</result>
+		</action>
+		<action name="ajaxUserContributionReportApp"
+			method="getUserContributionReportApp" class="reportAction">
+			<result name="input">/jsp/reports/ajaxUserContributionReportApp.jsp
+			</result>
+			<result>/jsp/reports/ajaxUserContributionReportApp.jsp
+			</result>
+		</action>
+		<action name="techScoreReport" method="techScoreReport"
+			class="reportAction">
+			<result>/jsp/reports/techScoreReport.jsp
+			</result>
+		</action>
+		<action name="ajaxTechScoreReport"
+			method="goGetTechScoreReportDetails" class="reportAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="compScoreReport" method="compScoreReport"
+			class="reportAction">
+			<result>/jsp/reports/compScoreReport.jsp
+			</result>
+		</action>
+		<action name="ajaxCompScoreReport"
+			method="goGetCompScoreReportDetails" class="reportAction">
+			<result name="success" type="json"></result>
+		</action>
+
+
+		<action name="capacityPlanningReport"
+			method="capacityPlanningReport" class="capacityPlanningAction">
+			<result>/jsp/reports/capacityPlanningReport.jsp
+			</result>
+		</action>
+		<action name="ajaxCapacityPlanningReport"
+			method="goGetCapacityPlanningReportDetails"
+			class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="capacityPlanningDetailsReport"
+			class="capacityPlanningAction">
+			<result>/jsp/reports/manageCapacityDetailsReport.jsp
+			</result>
+		</action>
+
+		<action name="goGetUnPlannedCapacityReport"
+			class="capacityPlanningAction" method="goGetUnPlannedCapacityReport">
+			<result>/jsp/reports/unPlannedcapacityReport.jsp
+			</result>
+		</action>
+
+		<action name="ajaxCapacityPlanningUserDetailsReport"
+			method="goGetCapacityUserDetailsReport"
+			class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="goGetUnPlannedCapacityReport"
+			class="capacityPlanningAction" method="redirectUnplannedCap">
+			<result>/jsp/reports/unPlannedcapacityReport.jsp
+			</result>
+		</action>
+		<action name="goGetUnPlannedCapacitySupname"
+			method="goGetUnPlannedCapacitySupname" class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="goGetUnPlannedCapacityBySup"
+			method="goGetUnPlannedCapacityBySup" class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="ajaxCapacityPlanningDetailsReport"
+			method="goCapacityPlanning" class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="ajaxCapacityPlanningNCUserDetailsReport"
+			method="goCapacityPlanningNCUserDetailsReport"
+			class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="userContributionDetailsReport"
+			class="reportAction">
+			<result>/jsp/reports/userContributionDetailsReport.jsp
+			</result>
+		</action>
+
+		<action name="ajaxUserContributionDetailsReport"
+			method="goGetContributionDetailReport" class="reportAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="releaseTrainReport"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/reports/releaseTrainReport.jsp
+			</result>
+		</action>
+
+		<action name="ajaxReleaseTrainReport"
+			method="goGetReleaseTrainDetails"
+			class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="userNWUtilization"
+			class="networkCodeUtilizationReport" method="goUserNWUtilization">
+			<result>/jsp/reports/networkUtilizationForManager.jsp
+			</result>
+		</action>
+
+		<action name="ajaxUserNWUtilization"
+			method="goGetUserNWUtilization" class="networkCodeUtilizationReport">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="downloadUserNWUtilization"
+			method="downloadUserNWUtilization"
+			class="networkCodeUtilizationReport">
+			<!-- <result name="success" type="stream"> <param name="contentType">application/octet-stream</param> 
+				<param name="inputName">inputStream</param> <param name="contentDisposition">attachment;filename="${fileName}"</param> 
+				<param name="bufferSize">4096</param> </result> -->
+			<result name="error" type="chain">userNWUtilization
+			</result>
+		</action>
+
+		<action name="saveProjectReleasePhase"
+			method="updateProjectPhase" class="networkCodesAction">
+			<result name="success" type="chain">releaseTrainReport
+			</result>
+		</action>
+
+		<action name="getPillarsMap" method="goPillarsMap"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/projects/pillars.jsp
+			</result>
+		</action>
+
+		<action name="getProjectsMap" method="goProjectsMap"
+			class="networkCodeUtilizationReport">
+			<result>/jsp/projects/projects.jsp
+			</result>
+		</action>
+		<action name="goProjectsMapNew" method="goProjectsMapNew"
+			class="networkCodeUtilizationReport">
+			<result type="json">
+				<param name="excludeNullProperties">true</param>
+				<param name="noCache">true</param>
+			</result>
+		</action>
+
+	</package>
+
+	<package name="timesheet" namespace="/timesheet"
+		extends="default">
+		<action name="ajaxSaveDeleteTimeSheet"
+			method="goDeleteTimeSheet" class="timesheetAction">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+			<action name="ajaxGetUserNwCapacity"
+			method="getUserNwCapacity" class="timesheetAction">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+		
+		<action name="logTimesheet" class="timesheetAction">
+			<result name="input">/jsp/timesheet/timesheetNew.jsp
+			</result>
+			<result>/jsp/timesheet/timesheetNew.jsp
+			</result>
+		</action>
+		<action name="logTimesheetWFM" method="getInitlogTimesheetWFM"
+			class="timesheetAction">
+			<result>/jsp/timesheet/timesheetWFM.jsp
+			</result>
+		</action>
+		<action name="downloadTimesheetWFM"
+			method="downloadTimesheetWFM" class="timesheetAction">
+			<result>/jsp/timesheet/timesheetDetailsWFM.jsp
+			</result>
+		</action>
+		<action name="downloadTimesheetWFMNow"
+			method="downloadTimesheetWFMNow" class="timesheetAction">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+		</action>
+		<action name="saveUserActivityWFM" method="saveUserActivityWFM"
+			class="timesheetAction">
+			<result>/jsp/timesheet/timesheetWFM.jsp
+			</result>
+		</action>
+		<action name="showTimesheetWFM" method="showTimesheetWFM"
+			class="timesheetAction">
+			<result>/jsp/timesheet/timesheetDetailsWFM.jsp
+			</result>
+		</action>
+		<action name="goUserActivity" method="goUserActivity"
+			class="timesheetAction">
+			<result>/jsp/timesheet/timesheetSummaryNew.jsp
+			</result>
+		</action>
+		<action name="getRemainingHrsForNetworkCode"
+			method="getRemainingHrsForNetworkCode" class="timesheetAction">
+			<result type="json">
+				<param name="excludeNullProperties">true</param>
+				<param name="noCache">true</param>
+			</result>
+		</action>
+		<action name="saveUserActivity" method="saveUserActivity"
+			class="timesheetAction">
+			<result>/jsp/timesheet/timesheetNew.jsp
+			</result>
+		</action>
+
+		<action name="saveTemplate" method="saveTemplate"
+			class="timesheetAction">
+			<result>/jsp/timesheet/timesheetNew.jsp
+			</result>
+		</action>
+
+		<action name="weekOff" method="weekOff" class="timesheetAction">
+			<result>/jsp/timesheet/userWeekOff.jsp
+			</result>
+		</action>
+
+		<action name="saveUserWeekOff" method="saveUserWeekOff"
+			class="timesheetAction">
+			<result>/jsp/timesheet/userWeekOff.jsp
+			</result>
+		</action>
+		<action name="goApproveTimesheet" class="timesheetAction"
+			method="goApproveTimesheet">
+			<result>/jsp/timesheet/approveTimesheet.jsp
+
+			</result>
+		</action>
+		<action name="approveTimesheet" class="timesheetAction"
+			method="approveTimesheet">
+			<result>/jsp/timesheet/approveTimesheetSummary.jsp
+			</result>
+		</action>
+
+		<action name="goUploadEssData" class="timesheetAction"
+			method="goUploadEssData">
+			<result>/jsp/timesheet/essDataFeed.jsp
+			</result>
+		</action>
+
+		<action name="uploadEssData" class="timesheetAction"
+			method="uploadEssData">
+			<result>/jsp/timesheet/essDataFeed.jsp
+			</result>
+		</action>
+
+		<action name="showEssData" class="timesheetAction"
+			method="showEssData">
+			<result>/jsp/timesheet/essData.jsp
+			</result>
+		</action>
+
+		<action name="ajaxshowEssData" class="timesheetAction"
+			method="getEssData">
+			<result type="json">
+				<param name="excludeNullProperties">true</param>
+				<param name="noCache">true</param>
+			</result>
+		</action>
+
+		<action name="updateEssData" class="timesheetAction"
+			method="updateEssData">
+			<result type="chain">showEssData
+			</result>
+		</action>
+
+	</package>
+
+	<package name="RICOTrainings" namespace="/RICOTrainings"
+		extends="struts-default, json-default">
+
+		<action name="manageRicoTrainings" method="manageRicoTrainings"
+			class="ricoTrainingsController">
+			<result name="success">/jsp/trainings/trainingVideos.jsp
+			</result>
+		</action>
+
+		<action name="getTrainingVideos"
+			class="ricoTrainingsController">
+			<result name="success" type="json">
+				<param name="root">nodes</param>
+			</result>
+		</action>
+
+		<action name="uploadFile" method="uploadTrainingFile"
+			class="ricoTrainingsController">
+			<result name="success" type="redirect">manageRicoTrainings
+			</result>
+		</action>
+
+		<action name="download" method="downloadFile"
+			class="ricoTrainingsController">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">fileInputStream</param>
+				<param name="contentDisposition">attachment;filename=%{filename}</param>
+				<param name="bufferSize">1024</param>
+			</result>
+		</action>
+
+	</package>
+
+	<package name="capacity" namespace="/capacity"
+		extends="default">
+
+		<action name="capacityPlanning" class="capacityPlanningAction">
+			<result>/jsp/capacity/manageCapacity.jsp
+			</result>
+		</action>
+
+		<action name="ajaxCapacityPlanning" method="goManageUser"
+			class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="ajaxCapacityPlanningDetails"
+			method="goCapacityPlanning" class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="capacityPlanningMACD"
+			method="capacityPlanningMACD" class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="getUserNetworkCodes" method="getUserNetworkCodes"
+			class="capacityPlanningAction">
+			<result>/jsp/capacity/networkCodesList.jsp
+			</result>
+		</action>
+
+		<action name="getUsers" method="goGetUsers"
+			class="capacityPlanningAction">
+			<result>/jsp/capacity/usersList.jsp
+			</result>
+		</action>
+
+		<action name="ajaxUserId" method="getParentRowId"
+			class="capacityPlanningAction">
+			<result>/jsp/capacity/userId.jsp
+			</result>
+		</action>
+		<action name="ajaxNetworkId" method="getParentNetworkRowId"
+			class="capacityPlanningAction">
+			<result>/jsp/capacity/networkId.jsp
+			</result>
+		</action>
+		<action name="capacityPlanningByProjectType"
+			class="capacityPlanningAction">
+			<result>/jsp/capacity/capacityByProjectType.jsp
+			</result>
+		</action>
+
+		<action name="goGetCapacityDetailsByProjectType"
+			method="goGetCapacityDetailsByProjectType"
+			class="capacityPlanningAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="capacityPlanningDetailsEditableReport"
+			method="editableReport" class="capacityPlanningByProjectAction">
+			<result>/jsp/capacity/manageCapacityDetailsReport.jsp
+			</result>
+		</action>
+		<action name="ajaxCcapacityPlanningDetailsEditableReport"
+			method="goManageUser" class="capacityPlanningByProjectAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="ajaxCapacityPlanningNCUserDetailsEditableReport"
+			method="goCapacityPlanningNCUserDetailsReport"
+			class="capacityPlanningByProjectAction">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="ajaxCapacityPlanningUserEditReport"
+			method="capacityPlanningMACD" class="capacityPlanningByProjectAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="capacityPlanningMACDEditable"
+			method="capacityPlanningMACD" class="capacityPlanningByProjectAction">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="getUserNetworkCodesEditable"
+			method="getUserNetworkCodes" class="capacityPlanningByProjectAction">
+			<result>/jsp/capacity/networkCodesList.jsp
+			</result>
+		</action>
+	</package>
+
+	<package name="announcements" namespace="/announcements"
+		extends="default">
+
+		<action name="manageAnnouncements" class="announcementsAction">
+			<result>/jsp/announcements/manageAnnouncements.jsp
+			</result>
+		</action>
+
+		<action name="ajaxManageAnnouoncements"
+			class="announcementsAction" method="goManageAnnouncements">
+			<result name="success" type="json"></result>
+			<result name="error" type="json"></result>
+		</action>
+
+		<action name="goCreateAnnouncement"
+			method="goCreateAnnouncement" class="announcementsAction">
+			<result>/jsp/announcements/announcements.jsp
+			</result>
+		</action>
+
+		<action name="goEditAnnouncement" method="goEditAnnouncement"
+			class="announcementsAction">
+			<result>/jsp/announcements/announcements.jsp
+			</result>
+		</action>
+
+		<action name="saveAnnouncement" method="saveAnnouncement"
+			class="announcementsAction">
+			<result name="success" type="redirect">manageAnnouncements
+			</result>
+		</action>
+
+		<action name="macdOperation" method="announcementMACDOperation"
+			class="announcementsAction">
+			<result name="success" type="json"></result>
+		</action>
+
+	</package>
+
+
+	<package name="others" namespace="/others" extends="default">
+		<action name="manageHolidays" method="loadHolidays"
+			class="utilAction">
+			<result>/jsp/others/manageHolidays.jsp
+			</result>
+		</action>
+		<action name="feedback" method="feedback" class="utilAction">
+			<result>/jsp/others/feedback.jsp
+			</result>
+		</action>
+
+		<action name="savefeedback" method="savefeedback"
+			class="utilAction">
+			<result>/jsp/others/feedback.jsp
+			</result>
+		</action>
+		<action name="goAjaxsavefeedback" method="savefeedback"
+			class="utilAction">
+			<result type="json">
+				<param name="noCache">true</param>
+				<param name="root">jsonString</param>
+			</result>
+		</action>
+		<action name="goGetfeedback" method="goGetfeedback"
+			class="utilAction">
+			<result>/jsp/others/manageFeedback.jsp
+			</result>
+		</action>
+
+
+		<action name="goAjaxGetfeedback" method="goAjaxGetfeedback"
+			class="utilAction">
+			<result type="json">
+				<param name="noCache">true</param>
+				<param name="root">feedbackList</param>
+			</result>
+		</action>
+		<action name="goAjaxManagefeedback"
+			method="goAjaxManagefeedback" class="utilAction">
+			<result type="json">
+				<param name="noCache">true</param>
+				<param name="root">feedbackList</param>
+			</result>
+		</action>
+
+		<action name="goUpdateFeedBackStatus"
+			method="goUpdateFeedBackStatus"
+			class="com.egil.pts.actions.UtilAction">
+			<result type="json">
+				<param name="noCache">true</param>
+				<param name="root">jsonString</param>
+			</result>
+		</action>
+
+		<action name="getHolidays" method="getHolidays"
+			class="utilAction">
+			<result>/jsp/others/manageHolidays.jsp
+			</result>
+		</action>
+
+		<action name="ajaxManageHolidays" method="ajaxManageHolidays"
+			class="utilAction">
+			<result name="success" type="json"></result>
+		</action>
+
+	</package>
+</struts>

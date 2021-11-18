@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE project>
+<project basedir="." default="all" name="pts">
+
+	<description>
+       	Project Tracking System
+    </description>
+
+	<property environment="env" />
+	<property file="build.properties" />
+	<property name="appdir" value="${basedir}" />
+	<property name="app" value="pts" />
+	<property name="builddir" value="${basedir}/bin" />
+	<property name="warfile" value="${builddir}/${app}.war" />
+	<property name="build.home" value="${basedir}/build/classes" />
+	<property name="srcdir" value="${appdir}/src" />
+	<property name="docs" value="${appdir}/api" />
+	<property name="lib.home" value="${builddir}/WEB-INF/lib" />
+	<property name="appserver.lib" value="C:\\SAI\\servers\\apache-tomcat-9.0.46\\lib" />
+
+	<path id="classpath">
+		<fileset dir="${appdir}">
+			<include name="WebContent/WEB-INF/**/*.jar" />
+		</fileset>
+		<fileset dir="${appserver.lib}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="init" description="Create build directory.">
+		<mkdir dir="${builddir}" />
+		<mkdir dir="${builddir}/summaryexport" />
+		<mkdir dir="${builddir}/WEB-INF" />
+		<mkdir dir="${builddir}/WEB-INF/classes" />
+	</target>
+
+
+
+
+	<target name="pts_ui.jar">
+		<jar destfile="${lib.home}/pts_ui.jar">
+			<fileset dir="${build.home}" includes="com/egil/pts/actions/**" />
+		</jar>
+	</target>
+
+	<target name="pts_common.jar">
+		<jar destfile="${lib.home}/pts_common.jar">
+			<fileset dir="${build.home}" includes="com/egil/pts/constants/**,com/egil/pts/util/**,com/egil/pts/modal/**" />
+		</jar>
+	</target>
+
+	<target name="pts_service.jar">
+		<jar destfile="${lib.home}/pts_service.jar">
+			<fileset dir="${build.home}" includes="com/egil/pts/service/**" />
+		</jar>
+	</target>
+
+	<target name="pts_dao.jar">
+		<jar destfile="${lib.home}/pts_dao.jar">
+			<fileset dir="${build.home}" includes="com/egil/pts/dao/**,com/egil/pts/config/**" />
+		</jar>
+	</target>
+
+	<target name="compile" depends="copy" description="Compile source files.">
+		<javac srcdir="${srcdir}" destdir="${build.home}" debug="true" deprecation="true">
+			<compilerarg value="-Xlint:unchecked" />
+			<include name="**/*.java" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="copy" depends="clean,init, pts_ui.jar, pts_common.jar, pts_service.jar,pts_dao.jar" description="Copy files to build directory.">
+		<copy todir="${builddir}" failonerror="false" verbose="true">
+			<fileset dir="${appdir}/WebContent" />
+		</copy>
+		<!--copy todir="${builddir}/WEB-INF/classes"
+	           failonerror="false" verbose="true">
+	         <fileset dir="${srcdir}">
+	            <exclude name="**/*.java"/>
+	         </fileset>
+	      </copy-->
+		<copy todir="${builddir}/WEB-INF" failonerror="false" verbose="true">
+			<fileset dir="${appdir}">
+				<include name="lib/**" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="war" depends="compile" description="Build WAR file.">
+		<delete file="${warfile}" />
+
+		<jar jarfile="${warfile}" basedir="${builddir}" />
+	</target>
+
+	<target name="all" depends="war" description="Deploy web application.">
+	</target>
+
+	<target name="clean" depends="init" description="Clean everything.">
+		<delete dir="${builddir}" />
+	</target>
+
+	<target name="doco" description="Generate JavaDocs for PTS">
+		<delete dir="${docs}" />
+		<mkdir dir="${docs}" />
+		<javadoc packagenames="com.vzn.*.*" sourcepath="${srcdir}" destdir="${docs}" author="true" access="private" use="true" windowtitle="Project Tracking System (PTS) API">
+			<group title="Action Package" packages="com.egil.pts.actions" />
+			<group title="Modal Objects Package" packages="com.egil.pts.modal" />
+			<group title="Common Utilities for PTS" packages="com.egil.pts.util" />
+			<group title="Common Config for PTS" packages="com.egil.pts.config" />
+			<classpath refid="classpath" />
+		</javadoc>
+	</target>
+</project>

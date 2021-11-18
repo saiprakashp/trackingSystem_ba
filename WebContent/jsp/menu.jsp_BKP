@@ -1,0 +1,301 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<style>
+.navMain {
+	color: white;
+	font-weight: bold;
+	font-size: 15px;
+	margin-bottom: 0px;
+	height: 35px;
+	background: rgb(255, 48, 25); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(255, 48, 25, 1) 0%,
+		rgba(297, 4, 4, 1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(255, 48, 25, 1) 0%,
+		rgba(297, 4, 4, 1) 100%); /* Chrome10-25,Safari5.l-6 */
+	background: linear-gradient(to bottom, rgba(255, 48, 25, 1) 0%,
+		rgba(297, 4, 4, 1) 100%);
+	/* W3C, 1E10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3019',
+		endColorstr='#cf0404', GradientType=0); /* IE6-9 */
+}
+
+@media screen and (max-width:700px) {
+	.navMain {
+		color: white;
+		font-weight: boLd;
+		font-size: 15px;
+		margin-bottom: 0px;
+		height: auto;
+		background: rgb(255, 48, 25); /* Old browsers */
+		background: -moz-linear-gradient(top, rgba(255, 48, 25, 1) 0%,
+			rgba(297, 4, 4, 1) 100%); /* FF3.6-15 */
+		background: -webkit-linear-gradient(top, rgba(255, 48, 25, 1) 0%,
+			rgba(297, 4, 4, 1) 100%); /* Chrome10-25,Safari5.l-6 */
+		background: linear-gradient(to bottom, rgba(255, 48, 25, 1) 0%,
+			rgba(297, 4, 4, 1) 100%);
+		/* W3C, 1E10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3019',
+			endColorstr='#cf0404', GradientType=0); /* IE6-9 */
+	}
+}
+</style>
+<nav
+	class="navbar navbar-expand-lg navbar-light font-weight-bolder navMain">
+	<button class="navbar-toggler navbar-toggler-right" type="button"
+		data-toggle="collapse" data-target="#navbarSupportedContent">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item"><s:a href="../login/showDashboard.action"
+					cssClass="nav-link" id="homeMenu">
+					<s:text name="pts.menu.home" />
+				</s:a></li>
+			<s:if
+				test="#session['role'] != null && (#session['role'] eq 'ADMIN' || #session['role'] eq 'LINE MANAGER' )">
+				<li class="nav-item"><a id="administratorMenu" class="nav-link"
+					href="../user/manageUser.action"><s:text
+							name="pts.menu.administrator" /></a> <!-- <span class="selected_link">&nbsp;</span>
+<div class="dropdown dropdown_2columns">
+<div class="col_1 firstcolumn">
+<ul class="link_list">
+<s:if
+te5t="#session['role'] != null && (#session['role'] eq 'ADMIN')">
+<1i><s:a cssClass="sub"
+href="../customer/manageCustomers.action">
+<s:text name="pts.menu.manage.customer" />
+</s:a></li>
+</s:if>
+<li><s:a cssClass="sub" href="../user/manageUser.action">
+<s:text name="pts.menu.manage.user" />
+</s:a></li>
+</ul>
+</div>
+</div>--></li>
+			</s:if>
+			<s:if
+				test="(#session['role'] != null && #session['role'] eq 'ADMIN') || (#session['role'] eq 'LINE MANAGER') || (#session['userStream'] != null && (#session['userStream'] == 5 || #session['userStream'] == 6))">
+				<li class="nav-item dropdown dmenu"><a
+					class="nav-link dropdown-toggle" href="#" id="navbardrop"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"> <s:text name="pts.menu.product" />
+				</a>
+					<div class="dropdown-menu sm-menu">
+						<s:if
+							test="#session['role'] != nuLL && #session['role'] eq 'ADMIN'">
+							<s:a cssClass="dropdown-item"
+								href="../projects/managePillars.action">
+								<s:text name="pts.menu.manage.pillar" />
+							</s:a>
+							<s:a cssClass="dropdown-item"
+								href="../projects/manageProjects.action">
+								<s:text name="pts.menu.manage.projects" />
+							</s:a>
+						</s:if>
+						<s:if
+							test="(#session['role'] != nuLL && #session['role'] eq 'ADMIN') || (#session['userStream'] != null && (#session['userStream'] == 5 || #session['userStream'] == 6))">
+							<s:a cssClass="dropdown-item"
+								href="../projects/manageNetworkCodes.action">
+								<s:text name="pts.menu.manage.network.codes" />
+							</s:a>
+						</s:if>
+						<s:if
+							test="(#session['role'] != nuLL && #session['role'] eq 'LINE MANAGER') ">
+							<s:a cssClass="dropdown-item"
+								href="../projects/manageNetworkCodesView.action">
+								<s:text name="pts.menu.manage.network.codes" />
+							</s:a>
+						</s:if>
+						<s:if
+							test="#session['role'] != nuLL && #session['role'] eq 'ADMIN'">
+							<a class='dropdown-item'
+								href="../projects/manageActivityCodes.action"><s:text
+									name="pts.menu.manage.activity.codes" /></a>
+						</s:if>
+						<%-- <s:if
+text="#session['role'] != null && #session['role'] eq 'LINE MANAGER'">
+<a class='dropdown-item' href="../projects/pmManagenetworkCodes.action"><s:text
+name="pts.menu.manage.network.codes" /></a>
+</s:if> --%>
+						<s:if
+							test="#session['role'] != nuLL && #session['role'] neq 'USER'">
+							<a class='dropdown-item'
+								href="../projects/assignResources.action"> <s:text
+									name="pts.menu.assign.resources" /></a>
+						</s:if>
+						<s:if
+							test="(#session['role'] != nuLL && #session['role'] eq 'LINE MANAGER') || (#session['userStream'] != null && (#session['userStream'] == 5 || #session['userStream'] == 6))">
+							<a class='dropdown-item'
+								href="../projects/mapNetworkCodes.action"> <s:text
+									name="pts.menu.assign.network.codes" /></a>
+						</s:if>
+						<a class='dropdown-item'
+							href="../announcements/manageAnnouncements.action"><s:text
+								name="pts.menu.announcements" /></a>
+					</div></li>
+			</s:if>
+			<s:if test="#session['role'] != null">
+				<li class="nav-item dropdown dmenu"><a
+					class="nav-link dropdown-toggle" href="#" id="navbardrop"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"><s:text
+							name="pts.menu.resource.timesheet" /></a>
+					<div class="dropdown-menu sm-menu">
+						<s:if test="#session['role'] neq 'ADMIN'">
+							<s:a cssClass="dropdown-item"
+								href="../timesheet/LogTimesheet.action">
+								<s:text name="pts.menu.resource.record.timesheet" />
+							</s:a>
+						</s:if>
+
+						<s:url var="userutilizationurl"
+							action="../utilization/userUtilizationReport.action"
+							escapeAmp="false">
+							<s:param name="userFlag" value="true" />
+						</s:url>
+						<s:a cssClass="dropdown-item" href="%{userUtilizationurl}">
+							<s:text name="pts.menu.user.utilization.report" />
+						</s:a>
+						<s:if
+							test="#session['role'] eq 'LINE MANAGER' || #session['role'] eq 'ADMIN'">
+							<s:if test="#session['role'] eq 'LINE MANAGER'">
+								<s:a cssClass="dropdown-item"
+									href="../timesheet/goApproveTimesheet.action">
+									<s:text name="pts.menu.approve.timesheet" />
+								</s:a>
+								<s:a cssClass="dropdown-item"
+									href="../utilization/manageUserUtilization.action">
+									<s:text name="pts.menu.reportee.utilization.report" />
+								</s:a>
+
+
+							</s:if>
+
+						</s:if>
+
+						<!--  <s:a cssClass="dropdown-item" href="../timesheet/weekOff.action">
+												<s:text name="pts.user.weekoff" />
+											</s:a> -->
+						<s:if
+							test="(#session['role'] != null && #session['role'] eq 'ADMIN') || (#session['role'] eq 'LINE MANAGER') || (#session['userStream'] != null && (#session['userStream'] == 5 || #session['userStream'] == 6))">"
+								<s:a cssClass="dropdown-item"
+								href="../utilization/networkCodeUtilization.action">
+								<s:text name="pts.menu.project.wise.utilization" />
+							</s:a>
+							<s:a cssClass="dropdown-item"
+								href="../utilization/ricoUtilizationReport.action">
+								<s:text name="pts.menu.utilization.report" />
+							</s:a>
+						</s:if>
+						<s:if test="#session['role'] eq 'ADMIN'">
+							<s:a cssClass="dropdown-item"
+								href="../utilization/goUploadEssData.action">
+								<s:text name="pts.menu.utilization.ess.data.feed" />
+							</s:a>
+
+						</s:if>
+						<!-- <s:if
+					test="#session['role'] != null && (#session['role'] eq 'ADMIN'">
+					<s:a cssClass="dropdown-item"
+												href="../utilization/ricoUtilizationReport.action">
+												<s:text name="Upload Ess Info" />
+											</s:a>
+					</s:if> -->
+
+					</div></li>
+			</s:if>
+			<li class="nav-item dropdown dmenu"><a
+				class="nav-link dropdown-toggle" href="#" id="navbardrop"
+				role="button" data-toggle="dropdown" aria-haspopup="true"
+				aria-expanded="false"><s:text name="pts.menu.profile" /></a>
+				<div class="dropdown-menu sm-menu">
+					<s:a cssClass="dropdown-item" href="../user/viewMyProfile.action"
+						theme="simple">
+						<s:text name="pts.menu.my.profile" />
+					</s:a>
+
+					<a class="dropdown-item" href="../user/goResetPassword.action">
+						<s:text name="pts.menu.reset.password" />
+					</a>
+				</div></li>
+			<s:if
+				test="#session['role'] != null && (#session['role'] eq 'ADMIN' || #session['role'] eq 'LINE MANAGER' )">
+				<li class="nav-item dropdown dmenu"><a
+					class="nav-link dropdown-toggle" href="#" id="navbardrop"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"><s:text
+							name="pts.menu.project.capacity.planning" /></a>
+					<div class="dropdown-menu sm-menu">
+						<a id="profileMenu" class="dropdown-item"
+							href="../capacity/capacityPlanning.action"><s:text
+								name="Capacity Planning By Resource" /></a> <a id="profileMenu"
+							class="dropdown-item"
+							href="../capacity/capacityPlanningDetailsEditableReport.action"><s:text
+								name="Capacity Planning By Project" /></a> <a id="profileMenu"
+								class="dropdown-item"
+								href="../reports/goGetUnPlannedCapacityReport.action"> UnPlanned
+								Projects </a>
+
+
+					</div></li>
+
+			</s:if>
+			<li class="nav-item dropdown dmenu"><a
+				class="nav-link dropdown-toggle" href="#" id="navbardrop"
+				role="button" data-toggle="dropdown" aria-haspopup="true"
+				aria-expanded="false"><s:text name="pts.menu.reports" /></a>
+				<div class="dropdown-menu sm-menu">
+					<a class="dropdown-item"
+						href="../reports/userContributionReport.action"> <s:text
+							name="pts.menu.reports.user.contribution.report" />
+					</a> <a id="profileMenu" class="dropdown-item"
+						href="../reports/capacityPlanningReport.action"><s:text
+							name="pts.menu.project.capacity.planning.report" /></a><a
+						id="profileMenu" class="dropdown-item"
+						href="../reports/capacityPlanningDetailsReport.action"><s:text
+							name="pts.menu.project.capacity.planning.details.report" /></a>
+					<!--<a id="profileMenu" class="dropdown-item"
+										href=../reports/userContributionDetailsReport.action"> <s:text
+												name="pts.menu.project.contribution.details.report" /></a>-->
+					<s:if
+						test="(#session['role'] != null && #session['role'] eq 'ADMIN') || (#session['role'] eq 'LINE MANAGER') || (#session['userStream'] != null && (#session['userStream'] == 5 || #session['userStream'] == 6))">
+						<a id="profileMenu" class="dropdown-item"
+							href="../reports/releaseTrainReport.action"><s:text
+								name="pts.menu.release.train.report" /></a>
+					</s:if>
+					<a id="profileMenu" class="dropdown-item"
+						href="../capacity/capacityPlanningByProjectType.action"><s:text
+							name="Capacity Planning By Project Type" /></a>
+					<s:if
+						test="#session['role'] != null && (#session['role'] eq 'ADMIN' || #session['role'] eq 'LINE MANAGER' )">
+						<s:a cssClass="dropdown-item" href="../user/utilization.action">
+							<s:text name="pts.menu.resource.utilization" />
+						</s:a>
+					</s:if>
+					<!--<a class="dropdown-item" href="../reports/techScoreReport.action"> <s:text
+												name="pts.menu.tech.score.report" />
+									</a><a class="dropdown-item" href="../reports/compScoreReport.action"> <s:text
+												name="pts.menu.comp.score.report" />
+									</a> -->
+				</div></li>
+
+
+			<!-- <li class="nav-item dropdown dmenu"><a id="navbardrop" class="nav-link dropdown-toggle"
+						href="javascript:void(0);"><s:text name="pts.menu.support" /></a>
+						<div class="dropdown-menu sm-menu">
+						<s:a cssClass="dropdown-item" href="#"
+											onClick="javascript:ricoTraninings()">
+											<s:text name="pts.menu.rico.trainings" />
+										</s:a></li>
+								</ul>
+							</div>
+						</div></li> -->
+		</ul>
+	</div>
+</nav>
+
+	<div class="row">
+		<div class='col'
+			style="width: 100%; backgorund: white; border-bottom: 1px solid darkgrey;">
+			<jsp:include page="breadcrums.jsp"></jsp:include>
+		</div>
+	</div>

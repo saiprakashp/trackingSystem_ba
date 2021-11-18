@@ -1,0 +1,21 @@
+log4j.logger.com.mchange=error,PTSLOGGER
+log4j.logger.org.springframework=error,PTSLOGGER
+log4j.logger.PTSEXLOGGER=DEBUG, PTSLOGGER
+log4j.logger.PTSCORE=DEBUG, PTSLOGGER
+log4j.logger.PTSDAO=DEBUG, PTSLOGGER
+log4j.logger.PTSPUI=DEBUG, PTSLOGGER
+log4j.logger.org.springframework.scheduling=WARN, PTS_SCHEDULING
+
+log4j.appender.PTS_SCHEDULING=org.apache.log4j.RollingFileAppender
+log4j.appender.PTS_SCHEDULING.File=${catalina.base}/logs/pts/pts_scheduling.log
+log4j.appender.PTS_SCHEDULING.layout=org.apache.log4j.PatternLayout
+log4j.appender.PTS_SCHEDULING.layout.ConversionPattern:[%d{DATE}] [%5p] [%-25C{1} %25H]:[%-4L] - %m%n
+log4j.appender.PTS_SCHEDULING.MaxFileSize=10MB
+
+log4j.appender.PTS_SCHEDULING.HaxBackupIndex=10
+log4j.appender.PTSLOGGER=org.apache.log4j.RollingFileAppender
+log4j.appender.PTSLOGGER.File=${catalina.base}/logs/pts/pts.log
+log4j.appender.PTSLOGGER.layout=org.apache.log4j.PatternLayout
+log4j.appender.PTSLOGGER.layout.ConversionPattern:[%d{DATE}] [%5p] [%-25C{1} %25H]:[%-4L] - %m%n
+log4j.appender.PTSLOGGER.MaxFileSize=20MB
+log4j.appender.PTSLOGGER.MaxBackupIndex=10
